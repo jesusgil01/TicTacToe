@@ -1,11 +1,19 @@
 package com.example.tictactoe;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,8 +22,10 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView playerOneScore, playerTwoScore, playerStatus;
-    private Button [] buttons = new Button[9];
+    private ImageButton [] buttons = new ImageButton[9];
     private Button resetGame;
+    int width = 0;
+    int height = 0;
 
     private int playerOneScoreCount, playerTwoScoreCount, rountCount;
     boolean activePlayer;
@@ -46,8 +56,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < buttons.length; i++){
             String buttonID = "btn_" + i;
             int resourceID = getResources().getIdentifier(buttonID, "id", getPackageName());
-            buttons[i] = (Button) findViewById(resourceID);
+            buttons[i] = (ImageButton) findViewById(resourceID);
             buttons[i].setOnClickListener(this);
+            width = buttons[i].getWidth();
+            height = buttons[i].getHeight();
         }
 
         rountCount = 0;
@@ -58,19 +70,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (!((Button) v).getText().toString().equals("")){
+        if (!(((ImageButton) v).getDrawable() == null)){
             return;
         }
         String buttonID = v.getResources().getResourceEntryName(v.getId());
         int gameStatePointer = Integer.parseInt(buttonID.substring(buttonID.length()-1, buttonID.length()));
 
         if (activePlayer){
-            ((Button) v).setText("X");
-            ((Button) v).setTextColor(Color.parseColor("#FFC34A"));
+            ((ImageButton) v).setBackgroundResource(R.drawable.ic_x);
+            ((ImageButton) v).setEnabled(false);
             gameState[gameStatePointer] = 0;
         } else {
-            ((Button) v).setText("O");
-            ((Button) v).setTextColor(Color.parseColor("#70FFEA"));
+            ((ImageButton) v).setBackgroundResource(R.drawable.ic_o);
+            ((ImageButton) v).setEnabled(false);;
             gameState[gameStatePointer] = 1;
         }
         rountCount++;
@@ -103,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         resetGame.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 playAgain();
@@ -132,13 +145,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playerTwoScore.setText(Integer.toString(playerTwoScoreCount));
     }
 
+
     public void playAgain(){
         rountCount = 0;
         activePlayer = true;
 
         for (int i = 0; i < buttons.length; i++){
             gameState[i] = 2;
-            buttons[i].setText("");
+            buttons[i].setBackgroundColor(Color.parseColor("#413F43"));
+            buttons[i].setEnabled(true);
         }
     }
 
